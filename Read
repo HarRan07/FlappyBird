@@ -1,1 +1,100 @@
 Flappy bird for android
+
+Code used-
+
+1.for spwanning green pipes-
+
+    public GameObject prefab;
+public float timer = 2f;
+float maxh = 1f, minh = -1f;
+float count;
+// Start is called before the first frame update
+
+void Start()
+{
+    count=timer;
+}
+
+// Update is called once per frame
+void Update()
+{
+    count=count-Time.deltaTime;
+    if (count < 0) {
+        count = timer;
+        spawnpip();
+    }
+}
+private void spawnpip() {
+    Vector3 spos =new Vector3(transform.position.x,UnityEngine.Random.Range(maxh,minh));
+    GameObject _prefab= Instantiate(prefab,spos,Quaternion.identity);
+    Destroy(_prefab,6f);
+}
+
+2. for movement of bird-
+
+Rigidbody2D Rb;
+float speed = 4f;
+// Start is called before the first frame update
+void Start()
+{
+    Rb=GetComponent<Rigidbody2D>();
+}
+
+// Update is called once per frame
+void Update()
+{
+    if (Input.touchCount>0) {
+        Rb.velocity = Vector2.up*speed;
+    }
+}
+
+3.for moving green pipes along x-axis-
+
+public static int Score=0;
+void Update()
+{
+    transform.position += Vector3.left * 1.7f * Time.deltaTime;
+
+}
+private void OnTriggerEnter2D(Collider2D collision)
+{
+    if (collision!=null) {
+        Score += 1;
+    }
+}
+private void OnCollisionEnter2D(Collision2D collision)
+{
+    if (collision != null) {
+        GameManager.Instance.GameOver();
+    }
+}
+
+4. Game manager containing functions to change scenes-
+
+public static GameManager Instance;
+[SerializeField] private GameObject Canv;
+// Start is called before the first frame update
+private void Awake()
+{
+    if (Instance == null)
+    {
+        Instance = this;
+    }
+}
+
+// Update is called once per frame
+void Update()
+{
+    
+}
+public void GameOver() { 
+    Canv.SetActive(true);
+    Time.timeScale = 0;
+}
+public void Restart()
+{
+    Time.timeScale = 1;
+    movepipe.Score = 0;
+    SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex);
+
+}
